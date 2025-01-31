@@ -1,0 +1,21 @@
+@startuml
+!include ../C4-PlantUML-2.11.0/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title [Container] Система «Тёплый дом»
+
+Person(customer, "Пользователь", "Пользователь системы умного дома")
+
+System_Boundary(c1, "«Тёплый дом»") {
+    Container(app, "Application", "Java, Spring MVC", "Provide functionality via API. Delivers the static content.", "java")
+    ContainerDb(database, "Database", "PostgreSQL", "Хранит информацию")
+}
+
+System_Ext(connected_home, "Подключённый дом", "Территория, подключённая к системе умного дома и датчикам")
+
+Rel(customer, app, "Uses", "HTTPS")
+Rel_Back_Neighbor(database, app, "Reads from and writes to", "sync, JDBC")
+Rel_Neighbor(app, connected_home, "Uses", "sync, HTTPS")
+
+@enduml
