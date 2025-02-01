@@ -1,0 +1,21 @@
+@startuml
+!include ../C4-PlantUML-2.11.0/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title [Component] Микросервис «Users»
+
+Container(api_gateway, "API Gateway", "Kusk", "Распределяет запросы между микросервисами и их инстансами")
+ContainerDb(database_common, "Database", "PostgreSQL", "Хранит информацию")
+
+Container_Boundary(api_users, "API Users") {
+  Component(sign_up, "Controller 'Регистрация'", "Позволяет зарегистрироваться в системе новым пользователям")
+  Component(sign_in, "Controller 'Авторизация'", "Позволяет пользователям авторизоваться в системе")
+}
+
+Rel(api_gateway, sign_up, "Uses", "JSON/HTTPS")
+Rel(api_gateway, sign_in, "Uses", "JSON/HTTPS")
+
+Rel(sign_up, database_common, "Uses", "JSON/HTTPS")
+Rel(sign_in, database_common, "Uses", "JSON/HTTPS")
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+!include ../C4-PlantUML-2.11.0/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title [Component] Микросервис «Smart Home»
+
+Container(api_gateway, "API Gateway", "Kusk", "Распределяет запросы между микросервисами и их инстансами")
+ContainerDb(database_common, "Database", "PostgreSQL", "Хранит информацию")
+ContainerDb(database_logs, "Database", "Kafka", "Хранит логи данных с устройств")
+
+Container_Boundary(api_smartHome, "API Smart Home") {
+  Component(home_settings, "Controller 'Настройки дома'", "Управление общими настройками умного дома")
+  Component(home_users, "Controller 'Пользователи дома'", "Управление пользователями, группами пользователей и их правами в умном доме")
+  Component(home_scenarios, "Controller 'Сценарии дома'", "Управление сценариями, запускающимися вручную либо в ответ на заданные события")
+  Component(home_devices, "Controller 'Устройства дома'", "Управление устройствами умного дома")
+  Component(home_events, "Controller 'События дома'", "Подписка на события, подходящие под определённые критерии")
+
+  Rel(home_scenarios, home_events, "Uses")
+  Rel(home_scenarios, home_devices, "Uses")
+}
+
+Rel(api_gateway, home_settings, "Uses", "JSON/HTTPS")
+Rel(api_gateway, home_users, "Uses", "JSON/HTTPS")
+Rel(api_gateway, home_scenarios, "Uses", "JSON/HTTPS")
+
+Rel(home_settings, database_common, "Uses", "JSON/HTTPS")
+Rel(home_users, database_common, "Uses", "JSON/HTTPS")
+Rel(home_scenarios, database_common, "Uses", "JSON/HTTPS")
+
+Rel(home_events, database_logs, "Reads from", "sync, JDBC")
+@enduml

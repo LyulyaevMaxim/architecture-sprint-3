@@ -1,0 +1,18 @@
+@startuml
+!include ../C4-PlantUML-2.11.0/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title [Component] Микросервис «Scenarios»
+
+Container(api_gateway, "API Gateway", "Kusk", "Распределяет запросы между микросервисами и их инстансами")
+ContainerDb(database_common, "Database", "PostgreSQL", "Хранит информацию")
+
+Container_Boundary(api_devices, "API Scenarios") {
+  Component(scenarios, "Controller 'Scenarios'", "Создание/редактирование общедоступных сценариев")
+}
+
+Rel(api_gateway, scenarios, "Uses", "JSON/HTTPS")
+
+Rel(scenarios, database_common, "Uses", "JSON/HTTPS")
+@enduml
