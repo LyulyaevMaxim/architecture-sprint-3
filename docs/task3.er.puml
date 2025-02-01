@@ -1,0 +1,59 @@
+@startuml
+class House {
+  +String id
+  +void setHomeSettings()
+
+  +List<User & HousePermissions> users
+  +void addUsersToHome()
+  +void removeUsersFromHome()
+  +void setUserPermissions()
+
+  +List<Device> devices
+  +void addDeviceToHome()
+  +void removeDeviceFromHome()
+}
+
+class HousePermissions {
+  +List<User['id']> canManageUsersOfHouse
+  +List<User['id']> canManageDevicesOfHouse
+  +List<User['id']> canManageScenariosOfHouse
+}
+
+class User {
+  +String id
+  +String name
+  +String email
+  +List<House> houses
+  +void register()
+  +void login()
+  +void logout()
+}
+
+class Device {
+  +String id
+  +String deviceTypeId
+  +String houseId
+  +String serial_number
+  +String status
+}
+
+class DeviceType {
+  +String id
+  +String name
+}
+
+class TelemetryData {
+  +Date date
+  +string value
+}
+
+User "1" -- "1..*" House : has
+
+House "1" -- "1..*" User : has
+House "1" -- "0..*" Device : has
+
+Device "1" -- "1" House : has
+Device "1" -- "0..*" TelemetryData : has
+
+DeviceType "1" -- "0..*" Device : has
+@enduml
