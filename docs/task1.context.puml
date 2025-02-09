@@ -1,0 +1,14 @@
+@startuml
+!include ./C4-PlantUML-2.11.0/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context diagram for «Тёплый дом»
+
+Person(customer, "Пользователь", "Пользователь системы умного дома")
+System(smart_home_system, "Система «Тёплый дом»", "Позволяет пользователям видеть информацию от устройств, подключённых к системе умного дома и управлять отоплением.")
+System_Ext(connected_home, "Подключённый дом", "Территория, подключённая к системе умного дома и датчикам")
+
+Rel(customer, smart_home_system, "Uses")
+Rel(smart_home_system, connected_home, "Uses")
+@enduml

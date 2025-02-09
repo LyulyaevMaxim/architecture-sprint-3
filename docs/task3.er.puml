@@ -1,0 +1,49 @@
+@startchen
+
+entity House {
+  id : STRING
+  users: User
+  devices: Device <<id>>
+}
+
+entity User {
+  id : STRING
+  name : STRING
+  email : STRING
+  houses: House <<id>>
+}
+
+entity Device {
+  id : STRING
+  deviceTypeId : STRING
+  houseId : STRING
+  serial_number : STRING
+  status : STRING
+}
+
+entity DeviceType {
+  id : STRING
+  name : STRING
+}
+
+entity TelemetryData {
+  date: DATE
+  value: STRING
+}
+
+relationship "Связаны внутри аккаунта" as Linked_to_account {
+}
+
+House -(1,N)- Linked_to_account
+User -(1,M)- Linked_to_account
+
+relationship "Привязаны к конкретном дому" as Linked_to_house {
+}
+
+House -1- Linked_to_house
+Linked_to_house -(0,X)- Device
+
+Device -(0,Y)- TelemetryData
+
+DeviceType -1- Device
+@endchen

@@ -1,0 +1,45 @@
+@startuml
+!include ../C4-PlantUML-2.11.0/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title [Container] Система «Тёплый дом»
+
+Person(customer, "Пользователь", "Пользователь системы умного дома")
+
+System_Boundary(c1, "«Тёплый дом»") {
+    Container(web_app, "Single-Page App", "JavaScript, React", "Provides all functionality to customers via their web browser")
+    Container(api_gateway, "API Gateway", "Kusk", "Распределяет запросы между микросервисами и их инстансами")
+
+    Container(api_smartHome, "API Smart Home", "Java, Spring", "Микросервис. Функциональность вокруг домена 'умный дом'", "java")
+    Container(api_users, "API Users", "Java, Spring", "Микросервис. Общая функциональность вокруг домена 'пользователи'", "java")
+    Container(api_devices, "API Devices", "Java, Spring", "Микросервис. Общая функциональность вокруг домена 'устройства'", "java")
+    Container(api_scenarios, "API Scenarios", "Java, Spring", "Микросервис. Общая функциональность вокруг домена 'сценарии и действия'", "java")
+
+    ContainerDb(database_common, "Database", "PostgreSQL", "Хранит информацию")
+    ContainerDb(database_logs, "Database", "Kafka", "Хранит логи данных с устройств")
+}
+
+System_Ext(connected_home, "Подключённый дом", "Территория, подключённая к системе умного дома и датчикам")
+
+Rel(customer, web_app, "Uses", "HTTPS")
+Rel(web_app, api_gateway, "Uses", "JSON/HTTPS")
+
+Rel(api_gateway, api_smartHome, "Uses", "JSON/HTTPS")
+Rel(api_gateway, api_users, "Uses", "JSON/HTTPS")
+Rel(api_gateway, api_devices, "Uses", "JSON/HTTPS")
+Rel(api_gateway, api_scenarios, "Uses", "JSON/HTTPS")
+
+Rel(api_smartHome, database_common, "Reads from and writes to", "sync, JDBC")
+Rel(api_users, database_common, "Reads from and writes to", "sync, JDBC")
+Rel(api_devices, database_common, "Reads from and writes to", "sync, JDBC")
+Rel(api_scenarios, database_common, "Reads from and writes to", "sync, JDBC")
+
+Rel(connected_home, api_gateway, "Запись данных с устройств", "async")
+Rel(api_gateway, database_logs, "Запись данных с устройств", "async")
+
+Rel(api_smartHome, database_logs, "Reads from", "sync, JDBC")
+
+Rel_Neighbor(api_gateway, connected_home, "Uses", "sync, HTTPS")
+
+@enduml
