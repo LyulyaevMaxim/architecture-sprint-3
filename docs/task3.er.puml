@@ -1,59 +1,49 @@
-@startuml
-class House {
-  +String id
-  +void setHomeSettings()
+@startchen
 
-  +List<User & HousePermissions> users
-  +void addUsersToHome()
-  +void removeUsersFromHome()
-  +void setUserPermissions()
-
-  +List<Device> devices
-  +void addDeviceToHome()
-  +void removeDeviceFromHome()
+entity House {
+  id : STRING
+  users: User
+  devices: Device <<id>>
 }
 
-class HousePermissions {
-  +List<User['id']> canManageUsersOfHouse
-  +List<User['id']> canManageDevicesOfHouse
-  +List<User['id']> canManageScenariosOfHouse
+entity User {
+  id : STRING
+  name : STRING
+  email : STRING
+  houses: House <<id>>
 }
 
-class User {
-  +String id
-  +String name
-  +String email
-  +List<House> houses
-  +void register()
-  +void login()
-  +void logout()
+entity Device {
+  id : STRING
+  deviceTypeId : STRING
+  houseId : STRING
+  serial_number : STRING
+  status : STRING
 }
 
-class Device {
-  +String id
-  +String deviceTypeId
-  +String houseId
-  +String serial_number
-  +String status
+entity DeviceType {
+  id : STRING
+  name : STRING
 }
 
-class DeviceType {
-  +String id
-  +String name
+entity TelemetryData {
+  date: DATE
+  value: STRING
 }
 
-class TelemetryData {
-  +Date date
-  +string value
+relationship "Связаны внутри аккаунта" as Linked_to_account {
 }
 
-User "1" -- "1..*" House : has
+House -(1,N)- Linked_to_account
+User -(1,M)- Linked_to_account
 
-House "1" -- "1..*" User : has
-House "1" -- "0..*" Device : has
+relationship "Привязаны к конкретном дому" as Linked_to_house {
+}
 
-Device "1" -- "1" House : has
-Device "1" -- "0..*" TelemetryData : has
+House -1- Linked_to_house
+Linked_to_house -(0,X)- Device
 
-DeviceType "1" -- "0..*" Device : has
-@enduml
+Device -(0,Y)- TelemetryData
+
+DeviceType -1- Device
+@endchen
